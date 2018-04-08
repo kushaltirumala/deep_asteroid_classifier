@@ -1,5 +1,6 @@
-import os
 from skimage import io
+from torch.utils.data import Dataset
+import pandas as pd
 
 class AsteroidDataset(Dataset):
 
