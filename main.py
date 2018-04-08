@@ -18,6 +18,7 @@ import torch
 import pandas as pd
 import torchvision
 import torchvision.transforms as transforms
+from torch.utils.data import DataLoader
 
 from asteroid_dataset import *
 
@@ -25,5 +26,19 @@ transform = transforms.Compose(
     [transforms.ToTensor(),
      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
-dataset = AsteroidDataset(csv_file="classifications.csv", root_dir="data/", transform=transform)
+train_dataset = AsteroidDataset(csv_file="classifications.csv", root_dir="data/", train=True, transform=transform)
+train_dataloader = DataLoader(train_dataset, batch_size=30, shuffle=True, num_workers=1)
+
+validation_dataset = AsteroidDataset(csv_file="classifications.csv", root_dir="data/", train=False, transform=transform)
+validation_dataloader = DataLoader(validation_dataset, batch_size=30, shuffle=True, num_workers=1)
+
+
+
+
+
+
+
+
+
+
 
