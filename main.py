@@ -27,7 +27,7 @@ from classifier import *
 csv_file = "classifications.csv"
 root_dir = "data/"
 batch_size = 30
-learning_rate = 0.01
+learning_rate = 0.1
 epoch_num = 2
 
 transform = transforms.Compose(
@@ -46,24 +46,27 @@ classifier = CNN()
 criterion = nn.BCELoss()
 optimizer = optim.Adam(classifier.parameters(), lr=learning_rate)
 
+print('Starting training...')
 for epoch in range(epoch_num):
 	for i, data in enumerate(train_dataloader, 0):
-		print i
 		inputs = data["image"]
 		labels = data["class"]
-		print inputs.shape
-		print labels.shape
-		print "\n"
 
-		opposite_labels = torch.Tensor(np.array([1-x for x in labels])).long()
-		new_labels = torch.cat((labels, opposite_labels), 0)
+		opposite_labels = np.array([1-x for x in labels])
 
-		inputs, labels = Variable(inputs), Variable(labels)
+		new_labels = torch.Tensor(np.column_stack((labels, opposite_labels)))
+
+		inputs, new_labels = Variable(inputs), Variable(new_labels)
 
 		optimizer.zero_grad()
 
 		output = classifier(inputs)
+		loss = criterion(output, new_labels)
 
+		print("[EPOCH %d ITER %d] Loss: %f" % (epoch, i, loss.data[0]))
+
+		loss.backward()
+		optimizer.step()
 
 
 
