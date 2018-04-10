@@ -9,23 +9,18 @@ from torch.autograd import Variable
 class CNN(nn.Module):
     def __init__(self, num_layers=2, hidden_num=32):
         super(CNN, self).__init__()
-        self.layer1 = nn.Sequential(
-            nn.Conv2d(3, 16, 5),
-            nn.BatchNorm2d(16),
-            nn.ReLU(),
-            nn.MaxPool2d(2))
-        self.layer2 = nn.Sequential(
-            nn.Conv2d(16, 32, 5),
-            nn.BatchNorm2d(32),
-            nn.ReLU(),
-            nn.MaxPool2d(2))
-        self.lin = nn.Linear(32*34*34, 2)
+        self.conv1 = nn.Conv2d(3, 10, kernel_size=5)
+        self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
+        self.fc1 = nn.Linear(20*34*34, 50)
+        self.fc2 = nn.Linear(50, 2)
 
     def forward(self, x):
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = x.view(-1, 32*34*34)
-        x = self.lin(x)
-        return F.softmax(x, dim=1)
+        x = F.relu(F.max_pool2d(self.conv1(x), 2))
+        x = F.relu(F.max_pool2d(self.conv2(x), 2))
+        x = x.view(-1, 20*34*34)
+        x = F.relu(self.fc1(x))
+        x = F.dropout(x, training=self.training)
+        x = self.fc2(x)
+        return F.log_softmax(x, dim=1)
 
     
