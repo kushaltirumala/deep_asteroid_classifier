@@ -31,7 +31,8 @@ learning_rate = 0.0001
 epoch_num = 2
 
 transform = transforms.Compose(
-    [transforms.ToTensor()])
+    [transforms.ToTensor(),
+     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
 train_dataset = AsteroidDataset(csv_file=csv_file, root_dir=root_dir, train=True, transform=transform)
 train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=1)
