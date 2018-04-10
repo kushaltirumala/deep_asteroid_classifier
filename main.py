@@ -26,7 +26,7 @@ from classifier import *
 
 csv_file = "classifications.csv"
 root_dir = "data/"
-batch_size = 200
+batch_size = 150
 learning_rate = 0.0001
 epoch_num = 2
 
