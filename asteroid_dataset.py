@@ -19,7 +19,7 @@ class AsteroidDataset(Dataset):
 
     def __getitem__(self, idx):
         img_name = os.path.join(self.root_dir, self.df.iloc[idx, self.col_idx])
-        image = np.array(Image.open(img_name).resize((150,150), Image.BILINEAR))
+        image = np.array(Image.open(img_name).resize((150,150), Image.BILINEAR).crop((0,0,150,135)))
         # type of image is numpy ndarray
         if self.transform:
             image = self.transform(image)

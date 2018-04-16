@@ -22,13 +22,17 @@ from torch.utils.data import DataLoader
 from asteroid_dataset import *
 import torch.optim as optim
 from classifier import *
-
+import visdom
+vis = visdom.Visdom()
+draw_graph = None
 
 csv_file = "classifications.csv"
 root_dir = "data/"
-batch_size = 150
-learning_rate = 0.0001
-epoch_num = 2
+batch_size = 159
+learning_rate = 0.00001
+epoch_num = 3
+save_model = True
+experiment_num = 1
 
 transform = transforms.Compose(
     [transforms.ToTensor(),
@@ -46,7 +50,17 @@ classifier = CNN()
 criterion = nn.NLLLoss()
 optimizer = optim.Adam(classifier.parameters(), lr=learning_rate)
 
+def model_save(model, path):
+	pickle.dump(model, open(path, 'wb'))
+
+def adjust_learning_rate(optimizer, epoch):
+    """Sets the learning rate to the initial LR decayed by 10 every 30 epochs"""
+    lr = learning_rate * (0.1 ** (epoch // 1))
+    for param_group in optimizer.param_groups:
+        param_group['lr'] = learning_rate
+
 print('Starting training...')
+total_iter = 0
 for epoch in range(epoch_num):
 	for i, data in enumerate(train_dataloader, 0):
 		inputs = data["image"]
@@ -58,12 +72,19 @@ for epoch in range(epoch_num):
 
 		output = classifier(inputs)
 		loss = criterion(output, labels)
+		update = None if draw_graph is None else 'append'
+		draw_graph = vis.line(X = np.array([total_iter]), Y = np.array([loss.data[0]]), win = draw_graph, update = update, opts=dict(title="NLL loss"))
+
+
 
 		print("[EPOCH %d ITER %d] Loss: %f" % (epoch, i, loss.data[0]))
 
 		loss.backward()
 		optimizer.step()
+		total_iter += 1
+	adjust_learning_rate(optimizer, epoch)
 
-
+if save_model:
+	model_save(classifier, "saved_models/"+str(experiment_num))
 
 
