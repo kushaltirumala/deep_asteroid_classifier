@@ -9,3 +9,9 @@ adjusted learning rate function (which definitely helped smoothen loss curve but
 #experiment 2
 
 Raising epoch num obviously helps convergence and lowers overall loss, but overfitting is something to be aware of with such a small dataset
+
+#experiment 3
+
+Epoch num = 20; learning rate 0.0001;
+Loss is lower and seems to be generally going down but necessarily converging;
+Will now check accuracy scores to see if accuracy is generally improving

@@ -29,9 +29,9 @@ draw_graph = None
 csv_file = "classifications.csv"
 root_dir = "data/"
 batch_size = 159
-learning_rate = 0.00001
-epoch_num = 10
-save_model = True
+learning_rate = 0.0001
+epoch_num = 1
+save_model = False
 experiment_num = 3
 
 transform = transforms.Compose(
@@ -60,7 +60,9 @@ def adjust_learning_rate(optimizer, epoch):
 
 print('Starting training...')
 total_iter = 0
+
 for epoch in range(epoch_num):
+	corrects = 0.0
 	for i, data in enumerate(train_dataloader, 0):
 		inputs = data["image"]
 		labels = data["class"]
@@ -75,7 +77,6 @@ for epoch in range(epoch_num):
 		draw_graph = vis.line(X = np.array([total_iter]), Y = np.array([loss.data[0]]), win = draw_graph, update = update, opts=dict(title="NLL loss"))
 
 
-
 		print("[EPOCH %d ITER %d] Loss: %f" % (epoch, i, loss.data[0]))
 
 		loss.backward()
@@ -84,6 +85,6 @@ for epoch in range(epoch_num):
 	adjust_learning_rate(optimizer, epoch)
 
 if save_model:
-	model_save(classifier, "saved_models/"+str(experiment_num))
+	model_save(classifier, "saved_models/experiment_"+str(experiment_num))
 
 
