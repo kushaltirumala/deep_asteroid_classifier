@@ -25,6 +25,7 @@ from classifier import *
 import visdom
 vis = visdom.Visdom()
 draw_graph = None
+draw_accuracy = None
 
 csv_file = "classifications.csv"
 root_dir = "data/"
@@ -51,7 +52,7 @@ criterion = nn.NLLLoss()
 optimizer = optim.Adam(classifier.parameters(), lr=learning_rate)
 
 def model_save(model, path):
-	pickle.dump(model, open(path, 'wb'))
+    pickle.dump(model, open(path, 'wb'))
 
 def adjust_learning_rate(optimizer, epoch):
     lr = learning_rate * (0.1 ** (epoch // 1))
@@ -62,29 +63,38 @@ print('Starting training...')
 total_iter = 0
 
 for epoch in range(epoch_num):
-	corrects = 0.0
-	for i, data in enumerate(train_dataloader, 0):
-		inputs = data["image"]
-		labels = data["class"]
+    corrects = 0.0
+    for i, data in enumerate(train_dataloader, 0):
+        inputs = data["image"]
+        labels = data["class"]
 
-		inputs, labels = Variable(inputs), Variable(labels)
+        inputs, labels = Variable(inputs), Variable(labels)
 
-		optimizer.zero_grad()
+        optimizer.zero_grad()
 
-		output = classifier(inputs)
-		loss = criterion(output, labels)
-		update = None if draw_graph is None else 'append'
-		draw_graph = vis.line(X = np.array([total_iter]), Y = np.array([loss.data[0]]), win = draw_graph, update = update, opts=dict(title="NLL loss"))
+        output = classifier(inputs)
+        loss = criterion(output, labels)
+        update = None if draw_graph is None else 'append'
+        draw_graph = vis.line(X = np.array([total_iter]), Y = np.array([loss.data[0]]), win = draw_graph, update = update, opts=dict(title="NLL loss"))
 
 
-		print("[EPOCH %d ITER %d] Loss: %f" % (epoch, i, loss.data[0]))
+        temp = output[:, 0].data.numpy()
+        temp = np.apply_along_axis(lambda x: np.ceil(np.exp(x)), 0, temp)
+        temp = torch.from_numpy(temp).long()
+        accuracy = torch.sum(temp == labels.data)/ float(batch_size)       
+        print ("CORRECT: %f" % accuracy)
 
-		loss.backward()
-		optimizer.step()
-		total_iter += 1
-	adjust_learning_rate(optimizer, epoch)
+        update = None if draw_accuracy is None else 'append'
+        draw_accuracy = vis.line(X = np.array([total_iter]), Y = np.array([accuracy]), win = draw_accuracy, update = update, opts=dict(title="Accuracy"))
+        
+        print("[EPOCH %d ITER %d] Loss: %f" % (epoch, i, loss.data[0]))
+
+        loss.backward()
+        optimizer.step()
+        total_iter += 1
+    adjust_learning_rate(optimizer, epoch)
 
 if save_model:
-	model_save(classifier, "saved_models/experiment_"+str(experiment_num))
+    model_save(classifier, "saved_models/experiment_"+str(experiment_num))
 
 
