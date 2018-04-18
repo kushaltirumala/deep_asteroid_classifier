@@ -30,9 +30,9 @@ csv_file = "classifications.csv"
 root_dir = "data/"
 batch_size = 159
 learning_rate = 0.00001
-epoch_num = 3
+epoch_num = 10
 save_model = True
-experiment_num = 1
+experiment_num = 3
 
 transform = transforms.Compose(
     [transforms.ToTensor(),
@@ -54,7 +54,6 @@ def model_save(model, path):
 	pickle.dump(model, open(path, 'wb'))
 
 def adjust_learning_rate(optimizer, epoch):
-    """Sets the learning rate to the initial LR decayed by 10 every 30 epochs"""
     lr = learning_rate * (0.1 ** (epoch // 1))
     for param_group in optimizer.param_groups:
         param_group['lr'] = learning_rate
