@@ -15,3 +15,9 @@ Raising epoch num obviously helps convergence and lowers overall loss, but overf
 Epoch num = 20; learning rate 0.0001;
 Loss is lower and seems to be generally going down but necessarily converging;
 Will now check accuracy scores to see if accuracy is generally improving
+
+# ADDED ACCURACY TRACKING
+
+#experiment 4
+
+LOWER learning rate, 20 epochs. accuracy does not seem to go generally up or down.

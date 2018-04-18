@@ -30,10 +30,10 @@ draw_accuracy = None
 csv_file = "classifications.csv"
 root_dir = "data/"
 batch_size = 159
-learning_rate = 0.0001
-epoch_num = 1
-save_model = False
-experiment_num = 3
+learning_rate = 0.00001
+epoch_num = 20
+save_model = True
+experiment_num = 4
 
 transform = transforms.Compose(
     [transforms.ToTensor(),
@@ -82,12 +82,11 @@ for epoch in range(epoch_num):
         temp = np.apply_along_axis(lambda x: np.ceil(np.exp(x)), 0, temp)
         temp = torch.from_numpy(temp).long()
         accuracy = torch.sum(temp == labels.data)/ float(batch_size)       
-        print ("CORRECT: %f" % accuracy)
 
         update = None if draw_accuracy is None else 'append'
         draw_accuracy = vis.line(X = np.array([total_iter]), Y = np.array([accuracy]), win = draw_accuracy, update = update, opts=dict(title="Accuracy"))
         
-        print("[EPOCH %d ITER %d] Loss: %f" % (epoch, i, loss.data[0]))
+        print("[EPOCH %d ITER %d] Loss: %f (accuracy: %f)" % (epoch, i, loss.data[0], accuracy))
 
         loss.backward()
         optimizer.step()
