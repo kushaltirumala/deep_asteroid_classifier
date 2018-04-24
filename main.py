@@ -30,10 +30,10 @@ draw_accuracy = None
 csv_file = "classifications.csv"
 root_dir = "data/"
 batch_size = 159
-learning_rate = 0.01
-epoch_num = 20
+learning_rate = 0.001
+epoch_num = 30
 save_model = True
-experiment_num = 5
+experiment_num = 6
 
 transform = transforms.Compose(
     [transforms.ToTensor(),

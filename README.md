@@ -16,8 +16,16 @@ Epoch num = 20; learning rate 0.0001;
 Loss is lower and seems to be generally going down but necessarily converging;
 Will now check accuracy scores to see if accuracy is generally improving
 
-# ADDED ACCURACY TRACKING
+AT THIS POINT I ADDED ACCURACY TRACKING
 
 #experiment 4
 
-LOWER learning rate, 20 epochs. accuracy does not seem to go generally up or down.
+LOWER learning rate, 20 epochs. accuracy does not seem to go generally up or down. 
+
+# experiment 5
+learning_rate = 0.01
+epoch_num = 20
+
+# experiment 6
+learninh_rate = 0.001
+epoch_num = 30
