@@ -84,7 +84,7 @@ for epoch in range(epoch_num):
             loss = criterion(output, labels)
 
             temp = output[:, 0].data.numpy()
-            temp = np.apply_along_axis(lambda x: np.ceil(np.exp(x)), 0, temp)
+            temp = np.apply_along_axis(lambda x: np.rint(x), 0, temp)
             temp = torch.from_numpy(temp).long()
             accuracy = torch.sum(temp == labels.data)/ float(batch_size)       
 
@@ -124,5 +124,4 @@ for epoch in range(epoch_num):
 
 if save_model:
     model_save(classifier, "saved_models/experiment_"+str(experiment_num))
-
 
