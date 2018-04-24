@@ -35,7 +35,7 @@ learning_rate = 0.001
 epoch_num = 30
 
 # experiment parameters
-experiment_num = 8
+experiment_num = 10
 save_model = True
 validate_frequency = 5
 draw_graph = None
@@ -108,7 +108,7 @@ for epoch in range(epoch_num):
 
 
         temp = output[:, 0].data.numpy()
-        temp = np.apply_along_axis(lambda x: np.ceil(np.exp(x)), 0, temp)
+        temp = np.apply_along_axis(lambda x: np.rint(x), 0, temp)
         temp = torch.from_numpy(temp).long()
         accuracy = torch.sum(temp == labels.data)/ float(batch_size)       
 

@@ -35,3 +35,9 @@ added validation loss to make sure overfitting is not happening
 
 # experiment 8
 added random rotation (data augmentation)
+
+# experiment 9
+added extra linear + dropout
+
+# experiment 10
+added different accuracy tracking
