@@ -24,19 +24,27 @@ import torch.optim as optim
 from classifier import *
 import visdom
 vis = visdom.Visdom()
-draw_graph = None
-draw_accuracy = None
+
 
 csv_file = "classifications.csv"
 root_dir = "data/"
+
+# hyperparameters
 batch_size = 159
 learning_rate = 0.001
 epoch_num = 30
+
+# experiment parameters
+experiment_num = 8
 save_model = True
-experiment_num = 6
+validate_frequency = 5
+draw_graph = None
+draw_accuracy = None
+draw_validation_graphs = None
 
 transform = transforms.Compose(
-    [transforms.ToTensor(),
+    [transforms.RandomRotation((0, 360)),
+     transforms.ToTensor(),
      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
 train_dataset = AsteroidDataset(csv_file=csv_file, root_dir=root_dir, train=True, transform=transform)
@@ -65,6 +73,27 @@ total_iter = 0
 for epoch in range(epoch_num):
     corrects = 0.0
     for i, data in enumerate(train_dataloader, 0):
+        # ------ validation step ----------
+        if total_iter % validate_frequency == 0:
+            data = next(iter(validation_dataloader))
+            inputs = data["image"]
+            labels = data["class"]
+
+            inputs, labels = Variable(inputs), Variable(labels)
+            output = classifier(inputs)
+            loss = criterion(output, labels)
+
+            temp = output[:, 0].data.numpy()
+            temp = np.apply_along_axis(lambda x: np.ceil(np.exp(x)), 0, temp)
+            temp = torch.from_numpy(temp).long()
+            accuracy = torch.sum(temp == labels.data)/ float(batch_size)       
+
+            update = None if draw_validation_graphs is None else 'append'
+            draw_validation_graphs = vis.line(X = np.array([total_iter]), Y = np.array([loss.data[0]]), win = draw_validation_graphs, update = update, opts=dict(title="Validation NLL loss"))
+            print("[EPOCH %d ITER %d] Validation Loss: %f (accuracy: %f)" % (epoch, i, loss.data[0], accuracy))
+
+
+        # ------ training step -------------
         inputs = data["image"]
         labels = data["class"]
 
@@ -75,7 +104,7 @@ for epoch in range(epoch_num):
         output = classifier(inputs)
         loss = criterion(output, labels)
         update = None if draw_graph is None else 'append'
-        draw_graph = vis.line(X = np.array([total_iter]), Y = np.array([loss.data[0]]), win = draw_graph, update = update, opts=dict(title="NLL loss"))
+        draw_graph = vis.line(X = np.array([total_iter]), Y = np.array([loss.data[0]]), win = draw_graph, update = update, opts=dict(title="Training NLL loss"))
 
 
         temp = output[:, 0].data.numpy()

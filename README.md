@@ -29,3 +29,9 @@ epoch_num = 20
 # experiment 6
 learninh_rate = 0.001
 epoch_num = 30
+
+# experiment 7
+added validation loss to make sure overfitting is not happening
+
+# experiment 8
+added random rotation (data augmentation)
