@@ -35,15 +35,19 @@ learning_rate = 0.001
 epoch_num = 30
 
 # experiment parameters
-experiment_num = 12
+experiment_num = 13
 save_model = True
 validate_frequency = 5
 draw_graph = None
 draw_accuracy = None
 draw_validation_graphs = None
 
+# file
+f = open("saved_output/experiment_%d.out" % experiment_num, 'w+')
+
 transform = transforms.Compose(
-    [transforms.ToTensor(),
+    [transforms.RandomRotation((0, 360)),
+     transforms.ToTensor(),
      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
 train_dataset = AsteroidDataset(csv_file=csv_file, root_dir=root_dir, train=True, transform=transform)
@@ -67,6 +71,8 @@ def adjust_learning_rate(optimizer, epoch):
         param_group['lr'] = learning_rate
 
 print('Starting training...')
+f.write('Starting training...\n')
+
 total_iter = 0
 
 for epoch in range(epoch_num):
@@ -89,6 +95,7 @@ for epoch in range(epoch_num):
             update = None if draw_validation_graphs is None else 'append'
             draw_validation_graphs = vis.line(X = np.array([total_iter]), Y = np.array([loss.data[0]]), win = draw_validation_graphs, update = update, opts=dict(title="Validation NLL loss"))
             print("[EPOCH %d ITER %d] Validation Loss: %f (accuracy: %f)" % (epoch, i, loss.data[0], accuracy))
+            f.write("[EPOCH %d ITER %d] Validation Loss: %f (accuracy: %f)\n" % (epoch, i, loss.data[0], accuracy))
 
         inputs = data["image"]
         labels = data["class"]
@@ -112,7 +119,8 @@ for epoch in range(epoch_num):
         draw_accuracy = vis.line(X = np.array([total_iter]), Y = np.array([accuracy]), win = draw_accuracy, update = update, opts=dict(title="Accuracy"))
         
         print("[EPOCH %d ITER %d] Loss: %f (accuracy: %f)" % (epoch, i, loss.data[0], accuracy))
-
+        f.write("[EPOCH %d ITER %d] Loss: %f (accuracy: %f)\n" % (epoch, i, loss.data[0], accuracy))
+        
         loss.backward()
         optimizer.step()
         total_iter += 1

@@ -47,3 +47,6 @@ best model so far (experiment 6) with the accuracy tracking
 
 # experiment 12
 checked accuracy tracking again
+
+# experiment 13
+re added data augmentation that was removed in exp 11 to see if accuracy can go even higher
