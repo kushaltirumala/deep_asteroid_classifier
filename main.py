@@ -35,7 +35,7 @@ learning_rate = 0.001
 epoch_num = 30
 
 # experiment parameters
-experiment_num = 11
+experiment_num = 12
 save_model = True
 validate_frequency = 5
 draw_graph = None
@@ -82,7 +82,7 @@ for epoch in range(epoch_num):
             loss = criterion(output, labels)
 
             temp = output[:, 0].data.numpy()
-            temp = np.apply_along_axis(lambda x: np.rint(x), 0, temp)
+            temp = np.apply_along_axis(lambda x: np.rint(np.exp(x)), 0, temp)
             temp = torch.from_numpy(temp).long()
             accuracy = torch.sum(temp == labels.data)/ float(batch_size)       
 
@@ -103,8 +103,8 @@ for epoch in range(epoch_num):
         draw_graph = vis.line(X = np.array([total_iter]), Y = np.array([loss.data[0]]), win = draw_graph, update = update, opts=dict(title="NLL loss"))
 
 
-        temp = output[:, 0].data.numpy()
-        temp = np.apply_along_axis(lambda x: np.rint(x), 0, temp)
+        temp = output[:, 1].data.numpy()
+        temp = np.apply_along_axis(lambda x: np.rint(np.exp(x)), 0, temp)
         temp = torch.from_numpy(temp).long()
         accuracy = torch.sum(temp == labels.data)/ float(batch_size)       
 

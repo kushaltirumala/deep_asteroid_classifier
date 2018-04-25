@@ -44,3 +44,6 @@ added different accuracy tracking
 
 # experiment 11 
 best model so far (experiment 6) with the accuracy tracking
+
+# experiment 12
+checked accuracy tracking again
