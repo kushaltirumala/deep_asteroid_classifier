@@ -105,6 +105,5 @@ creds.py
 data/
 new_classifications.csv
 ztf-astreaks-classifications.csv
-classifications.csv
 
 saved_models/
