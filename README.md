@@ -1,5 +1,12 @@
 # deep_asteroid_classifier
 
+# instructions:
+1) first install pytorch following directions here: http://pytorch.org/ <br>
+2) install visdom: run <code>pip install visdom</code><br>
+3) run <code>python -m visdom.server</code><br>
+4) run <code>python main.py</code><br>
+
+
 Initial runs were trying to tune hyper parameters for very small dataset we have
 
 ## experiment 1
