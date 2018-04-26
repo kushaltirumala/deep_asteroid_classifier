@@ -35,7 +35,7 @@ learning_rate = 0.001
 epoch_num = 30
 
 # experiment parameters
-experiment_num = 13
+experiment_num = 14
 save_model = True
 validate_frequency = 5
 draw_graph = None
@@ -46,8 +46,7 @@ draw_validation_graphs = None
 f = open("saved_output/experiment_%d.out" % experiment_num, 'w+')
 
 transform = transforms.Compose(
-    [transforms.RandomRotation((0, 360)),
-     transforms.ToTensor(),
+    [transforms.ToTensor(),
      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
 train_dataset = AsteroidDataset(csv_file=csv_file, root_dir=root_dir, train=True, transform=transform)
