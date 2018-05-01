@@ -6,6 +6,7 @@ import torch
 from torch.autograd import Variable
 import torchvision
 import torchvision.transforms as transforms
+import sys
 
 
 
@@ -30,4 +31,13 @@ def embed_input(path, model):
     return temp[0]
 
 
-model = load_model("saved_models/experiment_14")
+if __name__ == "__main__":
+    path = sys.argv[1]
+    model = load_model("saved_models/experiment_14")
+
+    if os.path.isfile(path):
+        print("detected only one file")
+        classification = embed_input(path, model)
+        print(classification)
+    elif os.path.isdir(path):
+        print("detected directory of files")
