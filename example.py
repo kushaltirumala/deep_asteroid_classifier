@@ -24,7 +24,6 @@ def embed_input(path, model):
     image = transform(image)
     image = Variable(image)
     image = image.unsqueeze(0)
-    image = image.permute(0, 2, 3, 1)
     output = model(image)
     temp = output[:, 1].data.numpy()
     temp = np.apply_along_axis(lambda x: np.rint(np.exp(x)), 0, temp)
