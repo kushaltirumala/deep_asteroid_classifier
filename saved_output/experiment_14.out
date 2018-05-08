@@ -1,2 +1,7 @@
 Starting training...
-[EPOCH 0 ITER 0] Validation Loss: 0.686841 (accuracy: 0.421384)
+[EPOCH 0 ITER 0] Validation Loss: 0.701932 (accuracy: 0.000000)
+[EPOCH 0 ITER 0] Loss: 0.702067 (accuracy: 0.000000)
+[EPOCH 0 ITER 1] Loss: 1.095009 (accuracy: 0.000000)
+[EPOCH 0 ITER 2] Loss: 0.618960 (accuracy: 0.000000)
+[EPOCH 0 ITER 3] Loss: 0.707926 (accuracy: 0.000000)
+[EPOCH 1 ITER 0] Loss: 0.669007 (accuracy: 0.000000)
