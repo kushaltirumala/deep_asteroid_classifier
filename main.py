@@ -86,10 +86,14 @@ for epoch in range(epoch_num):
             output = classifier(inputs)
             loss = criterion(output, labels)
 
-            temp = output[:, 0].data.numpy()
+            temp = output[:, 1].data.numpy()
             temp = np.apply_along_axis(lambda x: np.rint(np.exp(x)), 0, temp)
             temp = torch.from_numpy(temp).long()
-            accuracy = torch.sum(temp == labels.data)/ float(batch_size)       
+            num = torch.sum(temp == labels.data)
+            if type(num) is not int:
+                num = num.item()
+
+            accuracy = num/ float(batch_size)     
 
             update = None if draw_validation_graphs is None else 'append'
             draw_validation_graphs = vis.line(X = np.array([total_iter]), Y = np.array([loss.data[0]]), win = draw_validation_graphs, update = update, opts=dict(title="Validation NLL loss"))
@@ -112,7 +116,12 @@ for epoch in range(epoch_num):
         temp = output[:, 1].data.numpy()
         temp = np.apply_along_axis(lambda x: np.rint(np.exp(x)), 0, temp)
         temp = torch.from_numpy(temp).long()
-        accuracy = torch.sum(temp == labels.data)/ float(batch_size)       
+
+        num = torch.sum(temp == labels.data)
+        if type(num) is not int:
+            num = num.item()
+
+        accuracy = num/ float(batch_size)       
 
         update = None if draw_accuracy is None else 'append'
         draw_accuracy = vis.line(X = np.array([total_iter]), Y = np.array([accuracy]), win = draw_accuracy, update = update, opts=dict(title="Accuracy"))
