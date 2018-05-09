@@ -146,4 +146,6 @@ if save_model:
 
 # print confusion matrix to verify model 
 print(confusion_matrix.conf)
+f.write("\n")
+f.write(confusion_matrix.conf)
 
