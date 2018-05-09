@@ -23,6 +23,9 @@ from asteroid_dataset import *
 import torch.optim as optim
 from classifier import *
 import visdom
+from torchnet.meter import ConfusionMeter
+
+confusion_matrix = ConfusionMeter(2)
 vis = visdom.Visdom()
 draw_graph = None
 draw_accuracy = None
@@ -35,7 +38,7 @@ learning_rate = 0.001
 epoch_num = 30
 
 # experiment parameters
-experiment_num = 14
+experiment_num = 15
 save_model = True
 validate_frequency = 5
 draw_graph = None
@@ -129,6 +132,10 @@ for epoch in range(epoch_num):
         print("[EPOCH %d ITER %d] Loss: %f (accuracy: %f)" % (epoch, i, loss.data[0], accuracy))
         f.write("[EPOCH %d ITER %d] Loss: %f (accuracy: %f)\n" % (epoch, i, loss.data[0], accuracy))
         
+
+        # confusion matrix calculations
+        confusion_matrix.add(torch.Tensor(output.data), labels.data)
+
         loss.backward()
         optimizer.step()
         total_iter += 1
@@ -136,4 +143,7 @@ for epoch in range(epoch_num):
 
 if save_model:
     model_save(classifier, "saved_models/experiment_"+str(experiment_num))
+
+# print confusion matrix to verify model 
+print(confusion_matrix.conf)
 
