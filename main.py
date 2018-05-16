@@ -36,18 +36,20 @@ root_dir = "data/"
 # hyperparameters
 batch_size = 159
 learning_rate = 0.001
-epoch_num = 30
+epoch_num = 3
 
 # experiment parameters
+real_exp = False
 experiment_num = 16
-save_model = True
+save_model = real_exp
 validate_frequency = 5
 draw_graph = None
 draw_accuracy = None
 draw_validation_graphs = None
 
 # file
-f = open("saved_output/experiment_%d.out" % experiment_num, 'w+')
+if real_exp:
+    f = open("saved_output/experiment_%d.out" % experiment_num, 'w+')
 
 transform = transforms.Compose(
     [transforms.ToTensor(),
@@ -74,7 +76,8 @@ def adjust_learning_rate(optimizer, epoch):
         param_group['lr'] = learning_rate
 
 print('Starting training...')
-f.write('Starting training...\n')
+if real_exp:
+    f.write('Starting training...\n')
 
 total_iter = 0
 
@@ -102,7 +105,8 @@ for epoch in range(epoch_num):
             update = None if draw_validation_graphs is None else 'append'
             draw_validation_graphs = vis.line(X = np.array([total_iter]), Y = np.array([loss.data[0]]), win = draw_validation_graphs, update = update, opts=dict(title="Validation NLL loss"))
             print("[EPOCH %d ITER %d] Validation Loss: %f (accuracy: %f)" % (epoch, i, loss.data[0], accuracy))
-            f.write("[EPOCH %d ITER %d] Validation Loss: %f (accuracy: %f)\n" % (epoch, i, loss.data[0], accuracy))
+            if real_exp:
+                f.write("[EPOCH %d ITER %d] Validation Loss: %f (accuracy: %f)\n" % (epoch, i, loss.data[0], accuracy))
 
             confusion_matrix_validation.add(torch.Tensor(output.data), labels.data)
 
@@ -134,7 +138,8 @@ for epoch in range(epoch_num):
         draw_accuracy = vis.line(X = np.array([total_iter]), Y = np.array([accuracy]), win = draw_accuracy, update = update, opts=dict(title="Accuracy"))
         
         print("[EPOCH %d ITER %d] Loss: %f (accuracy: %f)" % (epoch, i, loss.data[0], accuracy))
-        f.write("[EPOCH %d ITER %d] Loss: %f (accuracy: %f)\n" % (epoch, i, loss.data[0], accuracy))
+        if real_exp:
+            f.write("[EPOCH %d ITER %d] Loss: %f (accuracy: %f)\n" % (epoch, i, loss.data[0], accuracy))
         
 
         # confusion matrix calculations
@@ -150,12 +155,21 @@ if save_model:
 
 # print confusion matrix to verify model 
 print("CONFUSION MATRIX FOR TRAINING")
-f.write("CONFUSION MATRIX FOR TRAINING")
+if real_exp:
+    f.write("CONFUSION MATRIX FOR TRAINING")
 print(confusion_matrix.conf)
-f.write(confusion_matrix.conf)
+if real_exp:
+    f.write(confusion_matrix.conf)
 
 print("CONFUSION MATRIX FOR VALIDATION")
-f.write("CONFUSION MATRIX FOR VALIDATION")
+if real_exp:
+    f.write("CONFUSION MATRIX FOR VALIDATION")
 print(confusion_matrix_validation.conf)
-f.write(confusion_matrix_validation.conf)
+if real_exp:
+    f.write(confusion_matrix_validation.conf)
+
+
+
+
+
 
