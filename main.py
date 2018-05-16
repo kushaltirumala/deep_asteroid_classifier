@@ -26,6 +26,7 @@ import visdom
 from torchnet.meter import ConfusionMeter
 
 confusion_matrix = ConfusionMeter(2)
+confusion_matrix_validation = ConfusionMeter(2)
 vis = visdom.Visdom()
 draw_graph = None
 draw_accuracy = None
@@ -38,7 +39,7 @@ learning_rate = 0.001
 epoch_num = 30
 
 # experiment parameters
-experiment_num = 15
+experiment_num = 16
 save_model = True
 validate_frequency = 5
 draw_graph = None
@@ -103,6 +104,9 @@ for epoch in range(epoch_num):
             print("[EPOCH %d ITER %d] Validation Loss: %f (accuracy: %f)" % (epoch, i, loss.data[0], accuracy))
             f.write("[EPOCH %d ITER %d] Validation Loss: %f (accuracy: %f)\n" % (epoch, i, loss.data[0], accuracy))
 
+            confusion_matrix_validation.add(torch.Tensor(output.data), labels.data)
+
+
         inputs = data["image"]
         labels = data["class"]
 
@@ -145,7 +149,13 @@ if save_model:
     model_save(classifier, "saved_models/experiment_"+str(experiment_num))
 
 # print confusion matrix to verify model 
+print("CONFUSION MATRIX FOR TRAINING")
+f.write("CONFUSION MATRIX FOR TRAINING")
 print(confusion_matrix.conf)
-f.write("\n")
 f.write(confusion_matrix.conf)
+
+print("CONFUSION MATRIX FOR VALIDATION")
+f.write("CONFUSION MATRIX FOR VALIDATION")
+print(confusion_matrix_validation.conf)
+f.write(confusion_matrix_validation.conf)
 
