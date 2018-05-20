@@ -36,11 +36,11 @@ root_dir = "data/"
 # hyperparameters
 batch_size = 159
 learning_rate = 0.001
-epoch_num = 30
+epoch_num = 50
 
 # experiment parameters
 real_exp = True
-experiment_num = 17
+experiment_num = 18
 save_model = real_exp
 validate_frequency = 5
 draw_graph = None
