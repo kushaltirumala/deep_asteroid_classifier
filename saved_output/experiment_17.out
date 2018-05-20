@@ -143,4 +143,6 @@ Starting training...
 [EPOCH 29 ITER 1] Loss: 0.264838 (accuracy: 0.893082)
 [EPOCH 29 ITER 2] Loss: 0.265100 (accuracy: 0.937107)
 [EPOCH 29 ITER 3] Loss: 0.238671 (accuracy: 0.937107)
-CONFUSION MATRIX FOR TRAINING         ¥   
+CONFUSION MATRIX FOR TRAINING
+[[416  24]
+ [ 31 165]]

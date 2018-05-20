@@ -1,6 +1,6 @@
 from __future__ import division
 
-tn, fp, fn, tp = 12428, 581, 2536, 3535
+tn, fp, fn, tp = 416, 24, 31, 165
 
 total = tn + fp + fn + tp
 
