@@ -26,7 +26,7 @@ import visdom
 from torchnet.meter import ConfusionMeter
 
 confusion_matrix = ConfusionMeter(2)
-confusion_matrix_validation = ConfusionMeter(2)
+# confusion_matrix_validation = ConfusionMeter(2)
 vis = visdom.Visdom()
 draw_graph = None
 draw_accuracy = None
@@ -36,11 +36,11 @@ root_dir = "data/"
 # hyperparameters
 batch_size = 159
 learning_rate = 0.001
-epoch_num = 3
+epoch_num = 30
 
 # experiment parameters
-real_exp = False
-experiment_num = 16
+real_exp = True
+experiment_num = 17
 save_model = real_exp
 validate_frequency = 5
 draw_graph = None
@@ -108,7 +108,7 @@ for epoch in range(epoch_num):
             if real_exp:
                 f.write("[EPOCH %d ITER %d] Validation Loss: %f (accuracy: %f)\n" % (epoch, i, loss.data[0], accuracy))
 
-            confusion_matrix_validation.add(torch.Tensor(output.data), labels.data)
+            # confusion_matrix_validation.add(torch.Tensor(output.data), labels.data)
 
 
         inputs = data["image"]
@@ -143,7 +143,8 @@ for epoch in range(epoch_num):
         
 
         # confusion matrix calculations
-        confusion_matrix.add(torch.Tensor(output.data), labels.data)
+        if epoch == epoch_num -1:
+            confusion_matrix.add(torch.Tensor(output.data), labels.data)
 
         loss.backward()
         optimizer.step()
@@ -161,12 +162,12 @@ print(confusion_matrix.conf)
 if real_exp:
     f.write(confusion_matrix.conf)
 
-print("CONFUSION MATRIX FOR VALIDATION")
-if real_exp:
-    f.write("CONFUSION MATRIX FOR VALIDATION")
-print(confusion_matrix_validation.conf)
-if real_exp:
-    f.write(confusion_matrix_validation.conf)
+# print("CONFUSION MATRIX FOR VALIDATION")
+# if real_exp:
+#     f.write("CONFUSION MATRIX FOR VALIDATION")
+# print(confusion_matrix_validation.conf)
+# if real_exp:
+#     f.write(confusion_matrix_validation.conf)
 
 
 
