@@ -1,0 +1,7 @@
+accuracy: 0.976415
+misclassification_rate:0.023585
+tp_rate: 0.959184
+fp_rate: 0.015909 
+specificty: 0.984091
+precision: 0.964103
+prevalence: 0.308176
