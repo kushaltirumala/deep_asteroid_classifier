@@ -4,6 +4,8 @@ import random
 import math
 import os
 import pandas as pd
+import sklearn
+import timeit
 
 import numpy as np
 import struct
@@ -24,12 +26,18 @@ import torch.optim as optim
 from classifier import *
 import visdom
 from torchnet.meter import ConfusionMeter
+from torchnet.meter import AUCMeter
+
+from sklearn.metrics import matthews_corrcoef
 
 confusion_matrix = ConfusionMeter(2)
+# temp_confusion_matrix = ConfusionMeter(2)
+auc_meter = AUCMeter()
 # confusion_matrix_validation = ConfusionMeter(2)
 vis = visdom.Visdom()
 draw_graph = None
 draw_accuracy = None
+draw_roc_curve = None
 
 csv_file = "classifications.csv"
 root_dir = "data/"
@@ -40,7 +48,7 @@ epoch_num = 50
 
 # experiment parameters
 real_exp = True
-experiment_num = 18
+experiment_num = 19
 save_model = real_exp
 validate_frequency = 5
 draw_graph = None
@@ -76,6 +84,8 @@ def adjust_learning_rate(optimizer, epoch):
         param_group['lr'] = learning_rate
 
 print('Starting training...')
+start = timeit.default_timer()
+
 if real_exp:
     f.write('Starting training...\n')
 
@@ -141,15 +151,46 @@ for epoch in range(epoch_num):
         if real_exp:
             f.write("[EPOCH %d ITER %d] Loss: %f (accuracy: %f)\n" % (epoch, i, loss.data[0], accuracy))
         
+        # mcoref = matthews_corrcoef(labels.data, output.data)
+        # print("matthews coefficient (training): %f" % mcoref)
+        # if real_exp:
+        #     f.write("matthews coefficient (training): %f\n" % mcoref)
 
         # confusion matrix calculations
         if epoch == epoch_num -1:
             confusion_matrix.add(torch.Tensor(output.data), labels.data)
+            print (output[:, 1].data.shape)
+            auc_meter.add(output[:, 1].data, labels.data)
+            area, tpr, fpr =  auc_meter.value()
+            mcoref = matthews_corrcoef(labels.data, temp)
+            print("matthews coefficient (end of training): %f" % mcoref)
+            print("area under roc curve: %f" % area)
+            if real_exp:
+                f.write("matthews coefficient (training): %f\n" % mcoref)
+                f.write("area under roc curve: %f" % area)
+
+
+            update = None if draw_roc_curve is None else 'append'
+            draw_roc_curve = vis.line(X = fpr, Y = tpr, win = draw_roc_curve, update = update, opts=dict(title="ROC curve"))
+
+
+
+        # temp_confusion_matrix.add(torch.Tensor(output.data), labels.data)
+        # tpr = temp_confusion_matrix.conf[0][0]/float(temp_confusion_matrix.conf[0][0] + temp_confusion_matrix.conf[0][1])
+        # fpr = temp_confusion_matrix.conf[1][0]/float(temp_confusion_matrix.conf[1][0] + temp_confusion_matrix.conf[1][1])
+        # update = None if draw_roc_curve is None else 'append'
+        # draw_roc_curve = vis.line(X = np.array([fpr]), Y = np.array([tpr]), win = draw_roc_curve, update = update, opts=dict(title="ROC curve"))
 
         loss.backward()
         optimizer.step()
+        temp = timeit.default_timer()
+        if epoch % 30 == 0 and epoch != 0:
+            print("TRAINING AT EPOCH %d TOOK %f" % (epoch, (temp-start)))
         total_iter += 1
     adjust_learning_rate(optimizer, epoch)
+
+stop = timeit.default_timer()
+print("TRAINING DONE: TOOK %f s" % (stop-start))
 
 if save_model:
     model_save(classifier, "saved_models/experiment_"+str(experiment_num))
@@ -160,7 +201,7 @@ if real_exp:
     f.write("CONFUSION MATRIX FOR TRAINING")
 print(confusion_matrix.conf)
 if real_exp:
-    f.write(confusion_matrix.conf)
+    f.write(np.array2string(confusion_matrix.conf, separator=', '))
 
 # print("CONFUSION MATRIX FOR VALIDATION")
 # if real_exp:
