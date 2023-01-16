@@ -24,5 +24,5 @@ torchnet==0.0.2
 torchvision==0.2.1
 tornado==5.0.2
 tqdm==4.23.2
-urllib3==1.22
+urllib3==1.26.5
 visdom==0.1.7
